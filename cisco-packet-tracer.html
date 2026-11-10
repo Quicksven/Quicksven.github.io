@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Packet Tracer Config Guide</title>
+<style>
+:root{
+  --bg:#0a1826;--panel:#0f2234;--panel2:#152c42;--line:#25405a;--text:#e9f2fb;--muted:#93aabf;
+  --accent:#38bdf8;--accent2:#7cc6ef;--ok:#4ade80;--warn:#fcd34d;--bad:#f87171;
+  --code:#06121e;--cmd:#a9dcf7;--ink:#04202f;--r:14px;--shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.35);
+}
+[data-theme=light]{
+  --bg:#eef5fb;--panel:#ffffff;--panel2:#eaf3fb;--line:#d4e4f1;--text:#0f2a43;--muted:#5c7793;
+  --accent:#0b76c4;--accent2:#005073;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;
+  --code:#0b2033;--cmd:#a9dcf7;--ink:#ffffff;--shadow:0 8px 24px rgba(10,60,110,.1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text)}
+button,.btn{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 13px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+button:hover,.btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+button:active{transform:none}
+.primary{background:var(--accent);color:var(--ink);border-color:var(--accent);font-weight:600}
+input,textarea,select{font:inherit;color:var(--text);background:var(--code);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0;outline:none;transition:border .15s,box-shadow .15s}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+input[type=checkbox]{accent-color:var(--ok);width:20px;height:20px;cursor:pointer;margin:0}
+kbd{font:12px ui-monospace,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;color:var(--muted);background:var(--panel2)}
+.hidden{display:none!important}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1320px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;margin-right:auto}
+.logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--ink);font-weight:800}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.search{position:relative}
+.search input{width:220px;padding-right:44px}
+.search kbd{position:absolute;right:8px;top:50%;transform:translateY(-50%)}
+.overall{display:flex;align-items:center;gap:10px;min-width:200px}
+.track{flex:1;height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.track>div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--ok));border-radius:99px;transition:width .4s ease}
+#pct{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;white-space:nowrap}
+.menu{display:flex;gap:8px;flex-wrap:wrap}
+
+/* layout */
+.layout{max-width:1320px;margin:0 auto;padding:22px 20px 80px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
+aside{position:sticky;top:96px}
+.navcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px;box-shadow:var(--shadow)}
+.navcard h4{margin:6px 8px 8px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+#nav a{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;color:var(--text);text-decoration:none;font-size:14px}
+#nav a:hover{background:var(--panel2)}
+#nav .dot{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent)}
+#nav .navcount{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+#nav a.complete .navcount{color:var(--ok)}
+.navhelp{margin-top:12px;color:var(--muted);font-size:12.5px;padding:0 8px}
+.navhelp div{margin:4px 0}
+main{min-width:0}
+
+/* cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 4px;font-size:16px}
+.kicker{font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:4px}
+.setup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.setup-grid .wide{grid-column:span 2}
+.field label{display:block;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600}
+.field input{width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:6px}
+.chip{font-size:12px;padding:3px 9px;border-radius:99px;background:color-mix(in srgb,var(--accent2) 16%,transparent);color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent)}
+.chip b{color:var(--text);font-weight:600}
+.hero{border:1px solid var(--accent);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,transparent),transparent 65%),var(--panel)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.mode{flex:1;min-width:150px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.mode .p{font:13px ui-monospace,monospace;color:var(--accent2)}
+.mode .n{font-size:12.5px;color:var(--muted);margin-top:3px}
+.mode .e{font:12px ui-monospace,monospace;color:var(--cmd);margin-top:6px}
+
+/* subnet calc */
+.calc-out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px}
+.calc-out>div{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:8px 11px}
+.calc-out .k{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.calc-out .v{font:14px ui-monospace,monospace;color:var(--cmd);margin-top:2px;word-break:break-all}
+.calc-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.calc-row .field{flex:1;min-width:160px}
+.calc-err{color:var(--bad);font-size:13px;margin-top:8px}
+
+/* sections */
+.section{margin:30px 0 8px;scroll-margin-top:96px}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.section-head .htext{margin-right:auto;display:flex;align-items:center;gap:10px}
+.section-head h2{margin:0;font-size:20px}
+.section-head .kicker{color:var(--c)}
+.chev{background:none;border:none;color:var(--muted);padding:4px;font-size:16px;transition:.2s}
+.section.collapsed .chev{transform:rotate(-90deg)}
+.section.collapsed .section-body{display:none}
+.pbar{width:140px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.pbar>div{height:100%;width:0;background:var(--c);border-radius:99px;transition:width .4s}
+.count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:40px;text-align:right}
+
+/* step cards */
+.step{border-left:4px solid var(--c,var(--accent))}
+.step-top{display:flex;gap:14px;align-items:flex-start}
+.bigchk{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);cursor:pointer;flex-shrink:0;transition:.15s}
+.bigchk:hover{border-color:var(--ok)}
+.step-main{flex:1;min-width:0}
+.step-title{font-weight:650;font-size:15.5px;cursor:default}
+.done>.step-top .step-title{color:var(--muted);text-decoration:line-through}
+.done>.step-top .step-title:hover{cursor:pointer;color:var(--text)}
+.step-sub{display:flex;gap:8px;align-items:center;margin-top:3px;flex-wrap:wrap}
+.tag{font-size:11px;letter-spacing:.4px;text-transform:uppercase;font-weight:700;border-radius:99px;padding:2px 8px}
+.tag.router{color:#60a5fa;border:1px solid color-mix(in srgb,#60a5fa 45%,transparent);background:color-mix(in srgb,#60a5fa 10%,transparent)}
+.tag.switch{color:#4ade80;border:1px solid color-mix(in srgb,#4ade80 45%,transparent);background:color-mix(in srgb,#4ade80 10%,transparent)}
+.tag.both{color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent2) 45%,transparent);background:color-mix(in srgb,var(--accent2) 10%,transparent)}
+.blockcopy{margin-left:auto;padding:5px 10px;font-size:12px}
+.body{margin-top:12px;padding-left:48px}
+.done:not(.open)>.body{display:none}
+.show-all .done>.body{display:block!important}
+.desc{color:var(--muted);margin:0 0 6px;font-size:14px}
+.notes-l{display:block;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:12px 0 6px;font-weight:600}
+textarea{width:100%;min-height:52px;resize:vertical;font-size:13.5px;color:var(--text);background:var(--code);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+
+/* commands */
+.cmd{display:flex;gap:10px;align-items:flex-start;background:var(--code);border:1px solid #16324a;border-radius:11px;padding:10px 12px;margin:8px 0}
+.cmd .cmdtext{flex:1;min-width:0}
+.cmd .lbl{display:block;color:#86add0;font-size:12px;margin-bottom:3px}
+.cmd code{display:block;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--cmd);white-space:pre-wrap;word-break:break-word}
+.cmd .exp{display:block;color:#9ab6d0;font-size:12px;line-height:1.45;margin-top:6px}
+.cmd .copy{padding:5px 10px;font-size:12px;background:#0c2336;border-color:#20446a;color:#cfe8fb}
+.ph{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent);border-radius:5px;padding:0 3px}
+
+/* toolbox */
+#toolbox .card{border-left:4px solid var(--accent2)}
+.tool-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tool-tabs button.active{background:var(--accent2);color:var(--ink);border-color:var(--accent2);font-weight:600}
+.tool-pane{display:none}
+.tool-pane.active{display:block}
+table.ref{width:100%;border-collapse:collapse;font-size:13.5px}
+table.ref td{border-top:1px solid var(--line);padding:8px 6px;vertical-align:top}
+table.ref td:first-child{font-family:ui-monospace,monospace;color:var(--cmd);white-space:nowrap;padding-right:14px}
+table.ref tr:first-child td{border-top:0}
+
+/* fab, toast, footer */
+#fab{position:fixed;right:20px;bottom:20px;z-index:30;background:var(--accent);color:var(--ink);border:none;border-radius:99px;padding:11px 16px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.35);opacity:0;pointer-events:none;transform:translateY(12px);transition:.25s}
+#fab.on{opacity:1;pointer-events:auto;transform:none}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 0}
+
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr}
+  aside{position:static}
+  #nav{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
+  .navhelp{display:none}
+  .setup-grid{grid-template-columns:1fr 1fr}
+  .search input{width:150px}
+  .body{padding-left:0}
+  .overall{min-width:0}
+}
+@media (max-width:560px){ .brand small{display:none} .setup-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar-in">
+    <div class="brand">
+      <div class="logo">PT</div>
+      <div>Packet Tracer Config Guide<small>Fill in your values — the IOS commands update as you type.</small></div>
+    </div>
+    <div class="search"><input type="search" id="q" placeholder="Search commands"><kbd>/</kbd></div>
+    <div class="overall"><div class="track"><div id="bar"></div></div><span id="pct"></span></div>
+    <div class="menu">
+      <button id="theme">Light mode</button>
+      <button id="toggle-done">Show completed</button>
+      <button id="exp-md">Export (.md)</button>
+      <button id="exp-json">Save</button>
+      <label class="btn">Load<input type="file" id="imp" accept=".json" hidden></label>
+      <button id="reset">Reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="navcard">
+      <h4>Sections</h4>
+      <nav id="nav"></nav>
+      <div class="navhelp">
+        <div><kbd>/</kbd> search &nbsp; <kbd>Esc</kbd> clear</div>
+        <div>Click a section title to collapse it.</div>
+        <div>Each step has a "Copy block" for the whole snippet.</div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <section class="card hero">
+      <div class="kicker">Read this first</div>
+      <h3>IOS command modes — how to move around the CLI</h3>
+      <p class="desc">Every command below runs in one of these modes. If IOS rejects a command, you are almost always in the wrong mode. Type <code style="font-family:ui-monospace">exit</code> to go back one level, or <code style="font-family:ui-monospace">end</code> (or Ctrl+Z) to jump straight to privileged mode.</p>
+      <div class="modes">
+        <div class="mode"><div class="p">Switch&gt;</div><div class="n">User EXEC — just arrived. Look only.</div><div class="e">enable</div></div>
+        <div class="mode"><div class="p">Switch#</div><div class="n">Privileged EXEC — show commands, save, debug.</div><div class="e">configure terminal</div></div>
+        <div class="mode"><div class="p">Switch(config)#</div><div class="n">Global config — device-wide settings.</div><div class="e">interface g0/0</div></div>
+        <div class="mode"><div class="p">Switch(config-if)#</div><div class="n">Interface config — one port or interface.</div><div class="e">exit / end</div></div>
+      </div>
+    </section>
+
+    <section class="card" id="setup">
+      <div class="kicker">Your values</div>
+      <h3>Device variables</h3>
+      <div class="setup-grid">
+        <div class="field"><label for="host">Hostname</label><input id="host" placeholder="R1 or SW1" autocomplete="off"></div>
+        <div class="field"><label for="int">Interface</label><input id="int" placeholder="GigabitEthernet0/0" autocomplete="off"></div>
+        <div class="field"><label for="ip">IP address</label><input id="ip" placeholder="192.168.10.1" autocomplete="off"></div>
+        <div class="field"><label for="cidr">CIDR (/)</label><input id="cidr" placeholder="24" autocomplete="off"></div>
+        <div class="field"><label for="gw">Default gateway / next hop</label><input id="gw" placeholder="192.168.10.254" autocomplete="off"></div>
+        <div class="field"><label for="vlan">VLAN ID</label><input id="vlan" placeholder="10" autocomplete="off"></div>
+        <div class="field wide"><label for="vlanname">VLAN name</label><input id="vlanname" placeholder="Sales" autocomplete="off"></div>
+      </div>
+      <div class="chips" id="chips"></div>
+    </section>
+
+    <section class="card" id="calc">
+      <div class="kicker">Helper</div>
+      <h3>Subnet calculator</h3>
+      <div class="calc-row">
+        <div class="field"><label for="calc-ip">IP address</label><input id="calc-ip" placeholder="192.168.10.37" autocomplete="off"></div>
+        <div class="field"><label for="calc-cidr">CIDR</label><input id="calc-cidr" placeholder="27" autocomplete="off"></div>
+        <button class="primary" id="calc-use">Use for commands</button>
+      </div>
+      <div id="calc-out"></div>
+    </section>
+
+    <div id="sections"></div>
+
+    <section id="toolbox">
+      <div class="section" id="section-toolbox" style="--c:var(--accent2)">
+        <header class="section-head">
+          <div class="htext"><button class="chev">▾</button><div><div class="kicker" style="color:var(--accent2)">Reference</div><h2>Cheat sheet</h2></div></div>
+        </header>
+        <div class="section-body">
+          <div class="card">
+            <div class="tool-tabs" id="tool-tabs"></div>
+            <div id="tool-panes"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>A study guide, not a substitute for understanding. Progress is saved in this browser; use "Save" to keep a copy.</footer>
+  </main>
+</div>
+
+<button id="fab">↑ Top</button>
+<div id="toast"></div>
+
+<script>
+const KEY = 'pt-config-guide-v1';
+const blank = () => ({ host:'', int:'', ip:'', cidr:'', gw:'', vlan:'', vlanname:'', done:{}, notes:{}, collapsed:{}, theme:'light' });
+let S = load();
+function load(){ try { return Object.assign(blank(), JSON.parse(localStorage.getItem(KEY)) || {}); } catch(e){ return blank(); } }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isDone = id => !!S.done[id];
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),1500); }
+
+/* ---------- subnet math ---------- */
+function ipToInt(ip){ const p=String(ip).split('.').map(Number); if(p.length!==4||p.some(x=>isNaN(x)||x<0||x>255))return null; return (((p[0]<<24)>>>0)+(p[1]<<16)+(p[2]<<8)+p[3])>>>0; }
+function intToIp(n){ return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.'); }
+function subnet(ip,cidr){
+  const i=ipToInt(ip); cidr=parseInt(cidr,10);
+  if(i===null||isNaN(cidr)||cidr<0||cidr>32)return null;
+  const mask=cidr===0?0:(0xFFFFFFFF<<(32-cidr))>>>0;
+  const net=(i&mask)>>>0, bc=(net|(~mask>>>0))>>>0;
+  const hosts=cidr>=31?(cidr===31?2:1):(2**(32-cidr)-2);
+  const first=cidr>=31?net:(net+1)>>>0, last=cidr>=31?bc:(bc-1)>>>0;
+  return { cidr, mask:intToIp(mask), wildcard:intToIp((~mask)>>>0), network:intToIp(net), broadcast:intToIp(bc), first:intToIp(first), last:intToIp(last), hosts };
+}
+
+/* ---------- fill placeholders ---------- */
+function fill(s){
+  const sn = subnet(S.ip, S.cidr);
+  const v = {
+    HOST: S.host || '<HOST>',
+    INT: S.int || '<INT>',
+    IP: S.ip || '<IP>',
+    CIDR: S.cidr || '<CIDR>',
+    MASK: sn ? sn.mask : '<MASK>',
+    WILD: sn ? sn.wildcard : '<WILDCARD>',
+    NET: sn ? sn.network : '<NETWORK>',
+    GW: S.gw || '<GATEWAY>',
+    VLAN: S.vlan || '<VLAN>',
+    VLANNAME: S.vlanname || '<NAME>',
+    DNS: '8.8.8.8',
+    AREA: '0'
+  };
+  return s.replace(/\{([A-Z]+)\}/g, (m,k) => (k in v ? v[k] : m));
+}
+function cmdHTML(label, raw, explain){
+  return `<div class="cmd"><div class="cmdtext">${label?`<span class="lbl">${esc(label)}</span>`:''}<code data-raw="${esc(raw)}"></code>${explain?`<span class="exp">${esc(explain)}</span>`:''}</div><button class="copy">Copy</button></div>`;
+}
+const cmds = arr => arr.map(c => cmdHTML(c[0], c[1], c[2])).join('');
+function refreshCodes(){
+  $$('code[data-raw]').forEach(c => {
+    c.innerHTML = esc(fill(c.dataset.raw)).replace(/&lt;([A-Z]+)&gt;/g,'<span class="ph">&lt;$1&gt;</span>');
+  });
+}
+
+/* ---------- data: SECTIONS. tag: router | switch | both. cmd = [label, command, explanation] ---------- */
+const SECTION_COLOR = { basics:'#0b76c4', switching:'#0ea5a5', ivr:'#6366f1', routing:'#2563eb', protocols:'#7c3aed', services:'#0891b2', stp:'#3b82f6', verify:'#14b8a6' };
+const SECTIONS = [
+  { id:'basics', name:'IOS basics', title:'Basics & device hardening', steps:[
+    { id:'b-mode', title:'Get into configuration mode', tag:'both', desc:'The three commands you run on every device before anything else.',
+      cmds:[
+        ['Enter privileged, then global config', 'enable\nconfigure terminal', 'enable moves from "Switch>" to "Switch#" (privileged). configure terminal moves to "Switch(config)#" where device-wide settings are made.'],
+        ['Name the device', 'hostname {HOST}', 'Sets the device name shown in the prompt. Naming devices early stops you configuring the wrong box.']
+      ]},
+    { id:'b-pass', title:'Set passwords', tag:'both', desc:'Protect privileged mode and the console so the device is not wide open.',
+      cmds:[
+        ['Encrypted privileged password', 'enable secret ClassLab1', 'Protects privileged EXEC (the # prompt). "secret" is hashed; never use the older "enable password", which is plaintext.'],
+        ['Console line password', 'line console 0\n password ClassLab1\n login\n exit', 'Asks for a password on the blue console cable. login turns the check on; without it the password is ignored.'],
+        ['Encrypt all plaintext passwords', 'service password-encryption', 'Scrambles the remaining plaintext passwords in the running config so a screenshot does not leak them. Weak encryption, but better than nothing.']
+      ]},
+    { id:'b-banner', title:'Login banner', tag:'both', desc:'A legal warning shown before login. Often required by lab rubrics.',
+      cmds:[
+        ['Message of the day', 'banner motd #Authorized access only#', 'Shows the text between the # markers before the login prompt. Pick any character not used in the message as the delimiter.']
+      ]},
+    { id:'b-save', title:'Save the configuration', tag:'both', desc:'The running config lives in RAM and is lost on reload. Save it to be safe.',
+      cmds:[
+        ['Copy running to startup', 'end\ncopy running-config startup-config', 'Writes the live config to NVRAM so it survives a reboot. Press Enter at the "Destination filename" prompt. "write memory" does the same thing.']
+      ]}
+  ]},
+  { id:'switching', name:'Switching', title:'Switch: VLANs, access & trunk ports', steps:[
+    { id:'s-vlan', title:'Create VLANs', tag:'switch', desc:'VLANs split one switch into separate broadcast domains.',
+      cmds:[
+        ['Create and name a VLAN', 'vlan {VLAN}\n name {VLANNAME}\n exit', 'Creates the VLAN in the database and labels it. The name is for humans; traffic is separated by the ID.'],
+        ['See your VLANs', 'do show vlan brief', 'Lists every VLAN and which ports belong to it. "do" lets you run a show command without leaving config mode.']
+      ]},
+    { id:'s-access', title:'Assign an access port', tag:'switch', desc:'Access ports carry one VLAN — use them for PCs, printers and servers.',
+      cmds:[
+        ['Put a port in a VLAN', 'interface {INT}\n switchport mode access\n switchport access vlan {VLAN}\n exit', 'mode access fixes the port to a single VLAN; access vlan says which one. The device plugged in now sits in that VLAN.'],
+        ['Do a range of ports at once', 'interface range fa0/1-10\n switchport mode access\n switchport access vlan {VLAN}', 'Applies the same settings to many ports in one go. Saves repeating yourself for a rack of identical hosts.']
+      ]},
+    { id:'s-trunk', title:'Configure a trunk link', tag:'switch', desc:'Trunks carry many VLANs between switches (or to a router).',
+      cmds:[
+        ['Make the link a trunk', 'interface {INT}\n switchport mode trunk\n exit', 'A trunk tags frames with their VLAN so multiple VLANs share one cable. Use it on switch-to-switch and switch-to-router links.'],
+        ['Limit which VLANs cross it', 'interface {INT}\n switchport trunk allowed vlan {VLAN},20,30', 'Restricts the trunk to just the VLANs you list, which is tidier and safer than allowing all. Use "add" to extend an existing list.'],
+        ['Check trunks', 'do show interfaces trunk', 'Confirms which ports are trunking, their native VLAN and the VLANs allowed. First stop when VLANs cannot talk across switches.']
+      ]},
+    { id:'s-portsec', title:'Port security', tag:'switch', desc:'Lock an access port to a limited set of MAC addresses.',
+      cmds:[
+        ['Lock the port to learned MACs', 'interface {INT}\n switchport mode access\n switchport port-security\n switchport port-security maximum 2\n switchport port-security mac-address sticky\n switchport port-security violation shutdown', 'Limits how many devices can use the port and remembers their MACs ("sticky"). On a violation the port shuts down until you re-enable it.'],
+        ['Check it', 'do show port-security interface {INT}', 'Shows the limit, the learned addresses and the violation count. Use it to confirm the policy and to see if it has tripped.']
+      ]},
+    { id:'s-mgmt', title:'Switch management IP & gateway', tag:'switch', desc:'A Layer-2 switch needs an IP on an SVI to be reachable remotely.',
+      cmds:[
+        ['Give the switch a management IP', 'interface vlan 1\n ip address {IP} {MASK}\n no shutdown\n exit', 'Puts a management address on a switch virtual interface so you can ping, SSH or Telnet to the switch itself.'],
+        ['Point it at its gateway', 'ip default-gateway {GW}', 'A Layer-2 switch does not route, so it needs this to reply to devices in other subnets. Routers and Layer-3 switches do not use this command.']
+      ]}
+  ]},
+  { id:'ivr', name:'Inter-VLAN', title:'Inter-VLAN routing', steps:[
+    { id:'i-rost', title:'Router-on-a-stick', tag:'router', desc:'One router interface routes between VLANs using sub-interfaces over a trunk.',
+      cmds:[
+        ['Create a sub-interface per VLAN', 'interface {INT}.{VLAN}\n encapsulation dot1Q {VLAN}\n ip address {IP} {MASK}\n no shutdown', 'The .{VLAN} sub-interface handles one VLAN; dot1Q {VLAN} matches the tag the switch sends. Its IP is that VLAN\'s default gateway.'],
+        ['Bring up the physical port', 'interface {INT}\n no shutdown', 'The parent interface must be up for the sub-interfaces to work, but it gets no IP of its own. The switch side of this link must be a trunk.']
+      ]},
+    { id:'i-svi', title:'Layer-3 switch (SVIs)', tag:'switch', desc:'A multilayer switch routes between VLANs internally — faster than a router on a stick.',
+      cmds:[
+        ['Turn on routing', 'ip routing', 'Enables the switch to route between its VLANs. Forgetting this is the most common reason SVIs do not route.'],
+        ['Give each VLAN a gateway SVI', 'interface vlan {VLAN}\n ip address {IP} {MASK}\n no shutdown', 'Creates a virtual interface for the VLAN whose IP is that VLAN\'s default gateway. Repeat for every VLAN you want to route.']
+      ]}
+  ]},
+  { id:'routing', name:'Routing', title:'Router interfaces & static routing', steps:[
+    { id:'r-int', title:'Configure a router interface', tag:'router', desc:'Give the interface an IP and switch it on — routers\' ports are off by default.',
+      cmds:[
+        ['Address and enable the port', 'interface {INT}\n ip address {IP} {MASK}\n no shutdown\n exit', 'ip address sets the IP and mask; no shutdown powers the interface on. A forgotten no shutdown is the classic "why is it down" bug.'],
+        ['Optional description', 'interface {INT}\n description Link to SW1', 'A label that shows in show commands. Makes big topologies readable and is often required by rubrics.']
+      ]},
+    { id:'r-static', title:'Static routes', tag:'router', desc:'Manually tell the router how to reach a network it is not directly connected to.',
+      cmds:[
+        ['Route to one network', 'ip route {NET} {MASK} {GW}', 'Says "to reach this network, send packets to this next-hop IP". You need one line per remote network (or one on each router).'],
+        ['Default route (gateway of last resort)', 'ip route 0.0.0.0 0.0.0.0 {GW}', 'Matches everything not in the routing table — ideal for the link toward the internet or a single upstream router. Replaces many specific routes.']
+      ]}
+  ]},
+  { id:'protocols', name:'Routing protocols', title:'Dynamic routing (RIP, OSPF, EIGRP)', steps:[
+    { id:'p-ospf', title:'OSPF (single area)', tag:'router', desc:'The most common lab routing protocol. Routers share networks automatically.',
+      cmds:[
+        ['Enable OSPF and advertise a network', 'router ospf 1\n network {NET} {WILD} area {AREA}\n exit', 'The "1" is a local process ID (any number). network ... area 0 tells OSPF which interfaces to run on, using a wildcard mask, not a subnet mask.'],
+        ['Check neighbours', 'do show ip ospf neighbor', 'Lists routers that have formed an OSPF adjacency. No neighbours means mismatched areas, subnets or a down link.']
+      ]},
+    { id:'p-eigrp', title:'EIGRP', tag:'router', desc:'Cisco\'s protocol — fast and simple for labs.',
+      cmds:[
+        ['Enable EIGRP', 'router eigrp 1\n no auto-summary\n network {NET} {WILD}\n exit', 'The "1" is the autonomous-system number and must match on all routers. no auto-summary keeps subnets from being merged incorrectly.']
+      ]},
+    { id:'p-rip', title:'RIPv2', tag:'router', desc:'Old and simple — still appears in beginner labs.',
+      cmds:[
+        ['Enable RIPv2', 'router rip\n version 2\n no auto-summary\n network 192.168.10.0\n exit', 'version 2 supports subnet masks; no auto-summary stops it lumping subnets together. RIP takes the classful network address, no wildcard.']
+      ]}
+  ]},
+  { id:'services', name:'Services', title:'DHCP, NAT, ACLs & SSH', steps:[
+    { id:'sv-dhcp', title:'DHCP server (on a router)', tag:'router', desc:'Hand out IP addresses automatically to a subnet.',
+      cmds:[
+        ['Reserve addresses, then build the pool', 'ip dhcp excluded-address {GW} {GW}\nip dhcp pool LAN\n network {NET} {MASK}\n default-router {GW}\n dns-server {DNS}\n exit', 'excluded-address keeps the router/static IPs from being handed out. The pool defines the subnet, the gateway and DNS that clients receive. Set PCs to DHCP to test.']
+      ]},
+    { id:'sv-relay', title:'DHCP relay', tag:'both', desc:'Forward DHCP requests when the server is on another subnet.',
+      cmds:[
+        ['Point the interface at the server', 'interface {INT}\n ip helper-address 10.0.0.5', 'DHCP uses broadcasts, which routers do not forward. ip helper-address relays the request to the real DHCP server\'s IP.']
+      ]},
+    { id:'sv-nat', title:'NAT overload (PAT)', tag:'router', desc:'Let a whole private network share one public IP.',
+      cmds:[
+        ['Mark inside and outside interfaces', 'interface {INT}\n ip nat inside\n exit\ninterface g0/1\n ip nat outside\n exit', 'NAT needs to know which side is the private "inside" and which is the public "outside". Set these on the right two interfaces.'],
+        ['Match internal hosts and overload', 'access-list 1 permit {NET} {WILD}\nip nat inside source list 1 interface g0/1 overload', 'The access-list picks which internal addresses get translated. overload (PAT) maps them all onto the outside interface using port numbers.'],
+        ['Check translations', 'do show ip nat translations', 'Shows the live inside-to-outside address/port mappings. Proof that NAT is actually working when a host reaches the internet.']
+      ]},
+    { id:'sv-acl', title:'Access control lists', tag:'router', desc:'Permit or deny traffic. Remember the hidden "deny all" at the end.',
+      cmds:[
+        ['Standard ACL (by source only)', 'access-list 10 permit {NET} {WILD}', 'Standard lists (1–99) filter on source address only. Place them close to the destination so you do not block too much.'],
+        ['Extended ACL (source, dest, port)', 'access-list 100 permit tcp {NET} {WILD} host 10.0.0.5 eq 80', 'Extended lists (100–199) match source, destination and port. This example allows web traffic to one server; place extended ACLs near the source.'],
+        ['Apply it to an interface', 'interface {INT}\n ip access-group 100 in', 'An ACL does nothing until applied. "in" filters traffic entering the interface; "out" filters traffic leaving it.']
+      ]},
+    { id:'sv-ssh', title:'SSH remote access', tag:'both', desc:'Secure replacement for Telnet. Several pieces must all be present.',
+      cmds:[
+        ['Prerequisites: name, domain, user, keys', 'hostname {HOST}\nip domain-name lab.local\nusername admin privilege 15 secret ClassLab1\ncrypto key generate rsa', 'SSH keys need a hostname and domain name to exist. The local user logs you in; at the key prompt choose 1024 bits or more.'],
+        ['Turn on SSH on the VTY lines', 'line vty 0 4\n transport input ssh\n login local\n exit', 'The VTY lines are the remote-login slots. transport input ssh blocks plaintext Telnet; login local checks the username you just made.']
+      ]}
+  ]},
+  { id:'stp', name:'STP & EtherChannel', title:'Spanning Tree & EtherChannel', steps:[
+    { id:'st-root', title:'Set the spanning-tree root', tag:'switch', desc:'Decide which switch is the centre of the loop-free tree.',
+      cmds:[
+        ['Make this switch the root', 'spanning-tree vlan {VLAN} root primary', 'Lowers this switch\'s priority so it wins the root election for that VLAN. The root should be your core/most central switch.'],
+        ['See the STP state', 'do show spanning-tree vlan {VLAN}', 'Shows the root, port roles and which links are blocking. The blocked port is STP stopping a loop, which is normal.']
+      ]},
+    { id:'st-portfast', title:'PortFast & BPDU guard', tag:'switch', desc:'Speed up access ports for end devices and protect them from rogue switches.',
+      cmds:[
+        ['On host-facing access ports', 'interface {INT}\n spanning-tree portfast\n spanning-tree bpduguard enable', 'PortFast skips the STP delay so PCs get a link immediately. BPDU guard shuts the port if a switch is plugged in there by mistake. Never use PortFast on a trunk.']
+      ]},
+    { id:'st-ec', title:'EtherChannel', tag:'switch', desc:'Bundle two or more links into one logical, higher-bandwidth link.',
+      cmds:[
+        ['Bundle the member ports (LACP)', 'interface range g0/1-2\n channel-group 1 mode active\n exit', 'Groups the physical ports into channel 1. mode active uses the LACP standard; both ends must agree (active/active or active/passive).'],
+        ['Configure the logical interface', 'interface port-channel 1\n switchport mode trunk', 'Settings put on the port-channel apply to all members at once. Configure the bundle as a trunk here, not the individual ports.'],
+        ['Verify the bundle', 'do show etherchannel summary', 'Confirms the channel formed and lists its member ports. Flags "(P)" in use, "(D)" down — a quick health check.']
+      ]}
+  ]},
+  { id:'verify', name:'Verify', title:'Verify & troubleshoot', steps:[
+    { id:'v-show', title:'The essential show commands', tag:'both', desc:'Run these from privileged mode (#) to see what the device is actually doing.',
+      cmds:[
+        ['Interface IPs and status at a glance', 'show ip interface brief', 'One line per interface: its IP and whether it is up/up. "administratively down" means you forgot no shutdown.'],
+        ['The routing table', 'show ip route', 'Every network the router can reach and how. C = connected, S = static, O = OSPF, D = EIGRP, R = RIP.'],
+        ['The full running config', 'show running-config', 'Dumps everything currently configured. The fastest way to audit a device or spot a typo.']
+      ]},
+    { id:'v-conn', title:'Test connectivity', tag:'both', desc:'Prove traffic flows. Work outward: gateway first, then the far host.',
+      cmds:[
+        ['Ping', 'ping {GW}', 'Sends test packets and reports replies. Ping the local gateway first; if that fails, the problem is on your own subnet.'],
+        ['Trace the path', 'traceroute 8.8.8.8', 'Lists each router (hop) along the way. The hop where it stops is where the routing or ACL problem lives.']
+      ]},
+    { id:'v-neigh', title:'See what is connected', tag:'both', desc:'Discover neighbouring Cisco devices and map the topology.',
+      cmds:[
+        ['Cisco neighbours', 'show cdp neighbors', 'Lists directly connected Cisco devices and the ports linking you. Great for rebuilding a diagram you were not given.'],
+        ['MAC address table (switch)', 'show mac address-table', 'Shows which MAC address was learned on which switch port. Confirms a device is really where you think it is.']
+      ]}
+  ]}
+];
+
+const STEPS = SECTIONS.flatMap(s => s.steps.map(x => ({ ...x, section:s.id })));
+
+/* ---------- toolbox ---------- */
+const TOOLBOX = [
+  { id:'modes', name:'Command modes', html:`<table class="ref">
+    <tr><td>Switch&gt;</td><td>User EXEC. Type <b>enable</b> to go up.</td></tr>
+    <tr><td>Switch#</td><td>Privileged EXEC — show, copy, debug, reload. Type <b>configure terminal</b>.</td></tr>
+    <tr><td>Switch(config)#</td><td>Global config — hostname, vlan, routing, ip route.</td></tr>
+    <tr><td>Switch(config-if)#</td><td>Interface config — one port. Enter with <b>interface g0/0</b>.</td></tr>
+    <tr><td>Switch(config-line)#</td><td>Line config — console / vty. Enter with <b>line vty 0 4</b>.</td></tr>
+    <tr><td>exit</td><td>Back one level. <b>end</b> or Ctrl+Z jumps straight to #.</td></tr>
+    <tr><td>do &lt;cmd&gt;</td><td>Run a show command without leaving config mode.</td></tr></table>` },
+  { id:'verify', name:'Verify commands', html:`<table class="ref">
+    <tr><td>show ip interface brief</td><td>Every interface, its IP and up/down status.</td></tr>
+    <tr><td>show running-config</td><td>Everything configured right now (in RAM).</td></tr>
+    <tr><td>show vlan brief</td><td>VLANs and which ports are in them.</td></tr>
+    <tr><td>show interfaces trunk</td><td>Trunk ports, native and allowed VLANs.</td></tr>
+    <tr><td>show ip route</td><td>Routing table (C/S/O/D/R codes).</td></tr>
+    <tr><td>show ip ospf neighbor</td><td>OSPF adjacencies that formed.</td></tr>
+    <tr><td>show cdp neighbors</td><td>Directly connected Cisco devices.</td></tr>
+    <tr><td>show mac address-table</td><td>MAC-to-port learning on a switch.</td></tr>
+    <tr><td>show port-security</td><td>Port-security limits and violations.</td></tr></table>` },
+  { id:'interfaces', name:'Interfaces & cables', html:`<table class="ref">
+    <tr><td>Console (blue)</td><td>Rollover cable, PC to switch/router console port. First-time setup.</td></tr>
+    <tr><td>Copper straight-through</td><td>Different device types: PC↔switch, switch↔router.</td></tr>
+    <tr><td>Copper cross-over</td><td>Same device types: switch↔switch, PC↔router, PC↔PC.</td></tr>
+    <tr><td>g0/0, g0/1</td><td>GigabitEthernet — router/uplink ports.</td></tr>
+    <tr><td>fa0/1 … fa0/24</td><td>FastEthernet — switch access ports.</td></tr>
+    <tr><td>interface range</td><td>Configure many ports at once: <b>interface range fa0/1-10</b>.</td></tr></table>` },
+  { id:'mistakes', name:'Common mistakes', html:`<table class="ref">
+    <tr><td>Down interface</td><td>Forgot <b>no shutdown</b> — router ports are off by default.</td></tr>
+    <tr><td>Config lost on reload</td><td>Forgot <b>copy running-config startup-config</b>.</td></tr>
+    <tr><td>VLANs can't cross switches</td><td>Link is access, not <b>trunk</b>; or VLAN not in allowed list.</td></tr>
+    <tr><td>SVIs don't route</td><td>Forgot <b>ip routing</b> on the Layer-3 switch.</td></tr>
+    <tr><td>OSPF no neighbours</td><td>Wrong <b>wildcard</b> mask or mismatched area/subnet.</td></tr>
+    <tr><td>Wrong mode error</td><td>Command needs config mode — run <b>configure terminal</b> first.</td></tr>
+    <tr><td>ACL blocks everything</td><td>Hidden <b>deny any</b> at the end — add a permit, apply the right direction.</td></tr></table>` }
+];
+
+/* ---------- rendering ---------- */
+function stepHTML(s){
+  const text = (s.title+' '+s.desc+' '+s.cmds.map(c=>c[0]+' '+c[1]+' '+(c[2]||'')).join(' ')).toLowerCase();
+  const tagTxt = { router:'Router', switch:'Switch', both:'Router + Switch' }[s.tag] || '';
+  const many = s.cmds.length > 0;
+  return `
+  <article class="card step" data-card data-step="${s.id}" data-text="${esc(text)}" id="step-${s.id}">
+    <div class="step-top">
+      <label class="bigchk" title="Mark as done"><input type="checkbox" data-done="${s.id}"></label>
+      <div class="step-main">
+        <div class="step-title">${esc(s.title)}</div>
+        <div class="step-sub"><span class="tag ${s.tag}">${esc(tagTxt)}</span></div>
+      </div>
+      ${many ? `<button class="blockcopy" data-block="${s.id}">Copy block</button>` : ''}
+    </div>
+    <div class="body">
+      <p class="desc">${esc(s.desc)}</p>
+      ${cmds(s.cmds)}
+      <label class="notes-l" for="n-${s.id}">Notes</label>
+      <textarea id="n-${s.id}" data-note="${s.id}" placeholder="Your values, what worked, what to remember">${esc(S.notes[s.id]||'')}</textarea>
+    </div>
+  </article>`;
+}
+function sectionHTML(sec){
+  return `
+  <section class="section ${S.collapsed[sec.id]?'collapsed':''}" id="section-${sec.id}" style="--c:${SECTION_COLOR[sec.id]}" data-section="${sec.id}">
+    <header class="section-head">
+      <div class="htext"><button class="chev">▾</button><div><div class="kicker">${esc(sec.name)}</div><h2>${esc(sec.title)}</h2></div></div>
+      <div class="pbar"><div data-bar="${sec.id}"></div></div>
+      <span class="count" data-count="${sec.id}"></span>
+    </header>
+    <div class="section-body">${sec.steps.map(stepHTML).join('')}</div>
+  </section>`;
+}
+function renderNav(){
+  const links = SECTIONS.map(s => `<a href="#section-${s.id}" style="--c:${SECTION_COLOR[s.id]}" data-nav="${s.id}"><span class="dot"></span><span>${esc(s.name)}</span><span class="navcount"></span></a>`).join('');
+  $('#nav').innerHTML = links + `<a href="#section-toolbox" style="--c:var(--accent2)"><span class="dot"></span><span>Cheat sheet</span><span class="navcount">★</span></a>`;
+}
+function renderToolbox(){
+  $('#tool-tabs').innerHTML = TOOLBOX.map((t,i)=>`<button data-tool="${t.id}" class="${i===0?'active':''}">${esc(t.name)}</button>`).join('');
+  $('#tool-panes').innerHTML = TOOLBOX.map((t,i)=>`<div class="tool-pane ${i===0?'active':''}" data-pane="${t.id}">${t.html}</div>`).join('');
+  $('#section-toolbox').classList.toggle('collapsed', !!S.collapsed.toolbox);
+}
+function render(){
+  renderNav();
+  $('#sections').innerHTML = SECTIONS.map(sectionHTML).join('');
+  renderToolbox();
+  loadInputs();
+  document.documentElement.dataset.theme = S.theme;
+  $('#theme').textContent = S.theme==='dark' ? 'Light mode' : 'Dark mode';
+  renderCalc();
+  updateStatus();
+}
+
+/* ---------- status & progress ---------- */
+function updateStatus(){
+  $$('[data-done]').forEach(cb => {
+    cb.checked = isDone(cb.dataset.done);
+    const card = cb.closest('[data-card]');
+    if (card) card.classList.toggle('done', cb.checked);
+  });
+  let T=0, D=0;
+  SECTIONS.forEach(sec => {
+    const t = sec.steps.length, d = sec.steps.filter(s=>isDone(s.id)).length;
+    T+=t; D+=d;
+    const c=$(`[data-count="${sec.id}"]`); if(c) c.textContent=`${d}/${t}`;
+    const b=$(`[data-bar="${sec.id}"]`); if(b) b.style.width=(t?d/t*100:0)+'%';
+    const n=$(`[data-nav="${sec.id}"]`); if(n){ n.querySelector('.navcount').textContent=`${d}/${t}`; n.classList.toggle('complete', t>0&&d===t); }
+  });
+  $('#bar').style.width=(T?D/T*100:0)+'%';
+  $('#pct').textContent=`${D}/${T} · ${T?Math.round(D/T*100):0}%`;
+
+  const sn = subnet(S.ip, S.cidr);
+  const chips = [];
+  if (S.host) chips.push(['Hostname', S.host]);
+  if (S.int) chips.push(['Interface', S.int]);
+  if (S.ip && sn) { chips.push(['Mask', sn.mask]); chips.push(['Network', sn.network]); chips.push(['Wildcard', sn.wildcard]); }
+  else if (S.ip) chips.push(['IP', S.ip + ' (add a CIDR for the mask)']);
+  if (S.vlan) chips.push(['VLAN', S.vlan + (S.vlanname ? ' ' + S.vlanname : '')]);
+  $('#chips').innerHTML = chips.map(c=>`<span class="chip">${esc(c[0])}: <b>${esc(c[1])}</b></span>`).join('');
+
+  refreshCodes();
+}
+
+/* ---------- subnet calculator ---------- */
+function renderCalc(){
+  const ip = $('#calc-ip').value.trim(), cidr = $('#calc-cidr').value.trim();
+  const out = $('#calc-out');
+  if (!ip && !cidr){ out.innerHTML = '<p class="desc" style="margin-top:12px">Enter an IP and a CIDR (e.g. 192.168.10.37 and 27) to see the network, usable range, mask and wildcard.</p>'; return; }
+  const sn = subnet(ip, cidr);
+  if (!sn){ out.innerHTML = '<div class="calc-err">Not a valid IP / CIDR. Example: 192.168.10.37 and 27.</div>'; return; }
+  const cell = (k,v) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  out.innerHTML = `<div class="calc-out">
+    ${cell('Network', sn.network + '/' + sn.cidr)}
+    ${cell('Subnet mask', sn.mask)}
+    ${cell('Wildcard', sn.wildcard)}
+    ${cell('Usable range', sn.hosts>0 ? sn.first + ' – ' + sn.last : '—')}
+    ${cell('Broadcast', sn.broadcast)}
+    ${cell('Usable hosts', sn.hosts)}
+  </div>`;
+}
+
+/* ---------- export ---------- */
+function download(text,name,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function exportMD(){
+  let out = `# Packet Tracer config notes\n\nHostname: ${S.host||'-'}\nInterface: ${S.int||'-'}\nIP: ${S.ip||'-'}${S.cidr?'/'+S.cidr:''}\nDate: ${new Date().toISOString().slice(0,10)}\n\n`;
+  SECTIONS.forEach(sec => {
+    out += `## ${sec.title}\n\n`;
+    sec.steps.forEach(s => {
+      out += `- [${isDone(s.id)?'x':' '}] ${s.title}\n`;
+      s.cmds.forEach(c => { out += '  ```\n  ' + fill(c[1]).replace(/\n/g,'\n  ') + '\n  ```\n'; });
+      if (S.notes[s.id]) out += `  - Notes: ${S.notes[s.id].replace(/\n/g,' ')}\n`;
+    });
+    out += '\n';
+  });
+  download(out, 'packet-tracer-notes.md', 'text/markdown');
+  toast('Notes downloaded');
+}
+
+/* ---------- wiring ---------- */
+function loadInputs(){
+  ['host','int','ip','cidr','gw','vlan','vlanname'].forEach(k => { const el=$('#'+k); if(el) el.value=S[k]; });
+}
+
+document.addEventListener('click', async e => {
+  const t = e.target;
+
+  const tool = t.closest('[data-tool]');
+  if (tool){
+    $$('#tool-tabs button').forEach(b=>b.classList.toggle('active', b===tool));
+    $$('#tool-panes .tool-pane').forEach(p=>p.classList.toggle('active', p.dataset.pane===tool.dataset.tool));
+    return;
+  }
+  const chev = t.closest('.section-head .htext');
+  if (chev){
+    const sec = chev.closest('.section'); const id = sec.dataset.section || 'toolbox';
+    sec.classList.toggle('collapsed'); S.collapsed[id]=sec.classList.contains('collapsed'); save();
+    return;
+  }
+  const bc = t.closest('[data-block]');
+  if (bc){
+    const card = document.getElementById('step-'+bc.dataset.block);
+    const text = [...card.querySelectorAll('code')].map(c=>c.textContent).join('\n');
+    try { await navigator.clipboard.writeText(text); } catch(err){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+    bc.textContent='Copied block'; setTimeout(()=>bc.textContent='Copy block',1300); toast('Whole block copied');
+    return;
+  }
+  const title = t.closest('.step-title');
+  if (title){ const card=title.closest('[data-card]'); if(card&&card.classList.contains('done')) card.classList.toggle('open'); return; }
+  const b = t.closest('.copy');
+  if (b){
+    const text = b.parentElement.querySelector('code').textContent;
+    try { await navigator.clipboard.writeText(text); } catch(err){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+    b.textContent='Copied'; setTimeout(()=>b.textContent='Copy',1200); toast('Command copied');
+  }
+});
+
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.matches('[data-done]')){ S.done[t.dataset.done]=t.checked; save(); updateStatus(); if(t.checked) toast('Step done'); }
+  if (t.id==='imp' && t.files[0]){
+    const r=new FileReader();
+    r.onload=()=>{ try{ S=Object.assign(blank(), JSON.parse(r.result)); save(); render(); toast('Loaded'); }catch(err){ alert('That is not a saved progress file.'); } };
+    r.readAsText(t.files[0]);
+  }
+});
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.matches('[data-note]')){ S.notes[t.dataset.note]=t.value; save(); return; }
+  if (['host','int','ip','cidr','gw','vlan','vlanname'].includes(t.id)){ S[t.id]=t.value.trim(); save(); updateStatus(); return; }
+  if (t.id==='calc-ip' || t.id==='calc-cidr'){ renderCalc(); return; }
+  if (t.id==='q'){
+    const q=$('#q').value.trim().toLowerCase();
+    $$('[data-card]').forEach(c => c.classList.toggle('hidden', !!q && !(c.dataset.text||'').includes(q)));
+  }
+});
+
+document.addEventListener('keydown', e => {
+  const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+  if (e.key==='/' && !typing){ e.preventDefault(); $('#q').focus(); }
+  if (e.key==='Escape' && document.activeElement===$('#q')){ $('#q').value=''; $$('[data-card]').forEach(c=>c.classList.remove('hidden')); $('#q').blur(); }
+});
+
+$('#calc-use').onclick = () => {
+  const ip=$('#calc-ip').value.trim(), cidr=$('#calc-cidr').value.trim();
+  if (!subnet(ip,cidr)){ toast('Enter a valid IP and CIDR first'); return; }
+  S.ip=ip; S.cidr=cidr; save(); loadInputs(); updateStatus(); toast('Applied to the commands');
+};
+$('#theme').onclick = () => { S.theme=S.theme==='dark'?'light':'dark'; save(); render(); };
+$('#toggle-done').onclick = e => { const on=document.body.classList.toggle('show-all'); e.currentTarget.textContent=on?'Hide completed':'Show completed'; };
+$('#exp-json').onclick = () => { download(JSON.stringify(S,null,2),'packet-tracer-progress.json','application/json'); toast('Saved to a file'); };
+$('#exp-md').onclick = exportMD;
+$('#reset').onclick = () => { if(confirm('Clear all values, notes and progress?')){ S=blank(); save(); render(); $('#calc-ip').value=''; $('#calc-cidr').value=''; renderCalc(); toast('Reset'); } };
+
+const fab = $('#fab');
+fab.onclick = () => scrollTo({ top:0, behavior:'smooth' });
+addEventListener('scroll', () => fab.classList.toggle('on', scrollY > 500));
+
+render();
+</script>
+</body>
+</html>
