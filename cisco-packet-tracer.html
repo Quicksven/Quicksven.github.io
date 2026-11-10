@@ -85,6 +85,7 @@ main{min-width:0}
 .calc-out>div{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:8px 11px}
 .calc-out .k{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
 .calc-out .v{font:14px ui-monospace,monospace;color:var(--cmd);margin-top:2px;word-break:break-all}
+.conv-label{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px}
 .calc-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .calc-row .field{flex:1;min-width:160px}
 .calc-err{color:var(--bad);font-size:13px;margin-top:8px}
@@ -227,13 +228,20 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 0}
 
     <section class="card" id="calc">
       <div class="kicker">Helper</div>
-      <h3>Subnet calculator</h3>
+      <h3>Subnet &amp; mask calculator</h3>
       <div class="calc-row">
         <div class="field"><label for="calc-ip">IP address</label><input id="calc-ip" placeholder="192.168.10.37" autocomplete="off"></div>
         <div class="field"><label for="calc-cidr">CIDR</label><input id="calc-cidr" placeholder="27" autocomplete="off"></div>
         <button class="primary" id="calc-use">Use for commands</button>
       </div>
       <div id="calc-out"></div>
+      <div class="conv-label">Mask ⇄ Wildcard ⇄ CIDR — type in any one box to get the other two</div>
+      <div class="calc-row">
+        <div class="field"><label for="conv-cidr">CIDR (/)</label><input id="conv-cidr" placeholder="27" autocomplete="off"></div>
+        <div class="field"><label for="conv-mask">Subnet mask</label><input id="conv-mask" placeholder="255.255.255.224" autocomplete="off"></div>
+        <div class="field"><label for="conv-wild">Wildcard</label><input id="conv-wild" placeholder="0.0.0.31" autocomplete="off"></div>
+      </div>
+      <div id="conv-err" class="calc-err"></div>
     </section>
 
     <div id="sections"></div>
@@ -593,6 +601,28 @@ function updateStatus(){
 }
 
 /* ---------- subnet calculator ---------- */
+function cidrToMaskInt(c){ return c===0?0:(0xFFFFFFFF<<(32-c))>>>0; }
+function maskIntToCidr(m){ let c=0,zero=false; for(let b=31;b>=0;b--){ const bit=(m>>>b)&1; if(bit){ if(zero) return null; c++; } else zero=true; } return c; }
+function convert(which){
+  const cidrEl=$('#conv-cidr'), maskEl=$('#conv-mask'), wildEl=$('#conv-wild'), err=$('#conv-err');
+  err.textContent='';
+  if(which==='cidr'){
+    const v=cidrEl.value.trim(); if(v===''){ maskEl.value=''; wildEl.value=''; return; }
+    const c=parseInt(v,10); if(isNaN(c)||c<0||c>32){ err.textContent='CIDR must be a number from 0 to 32.'; return; }
+    const m=cidrToMaskInt(c); maskEl.value=intToIp(m); wildEl.value=intToIp((~m)>>>0);
+  } else if(which==='mask'){
+    const v=maskEl.value.trim(); if(v===''){ cidrEl.value=''; wildEl.value=''; return; }
+    const i=ipToInt(v); if(i===null){ err.textContent='Subnet mask must be four octets, e.g. 255.255.255.224.'; return; }
+    const c=maskIntToCidr(i); if(c===null){ err.textContent='Not a valid subnet mask — its 1-bits must be contiguous.'; return; }
+    cidrEl.value=String(c); wildEl.value=intToIp((~i)>>>0);
+  } else {
+    const v=wildEl.value.trim(); if(v===''){ cidrEl.value=''; maskEl.value=''; return; }
+    const wi=ipToInt(v); if(wi===null){ err.textContent='Wildcard must be four octets, e.g. 0.0.0.31.'; return; }
+    const mi=(~wi)>>>0; const c=maskIntToCidr(mi); if(c===null){ err.textContent='Not a valid wildcard — its 0-bits must be contiguous.'; return; }
+    cidrEl.value=String(c); maskEl.value=intToIp(mi);
+  }
+}
+
 function renderCalc(){
   const ip = $('#calc-ip').value.trim(), cidr = $('#calc-cidr').value.trim();
   const out = $('#calc-out');
@@ -680,6 +710,9 @@ document.addEventListener('input', e => {
   if (t.matches('[data-note]')){ S.notes[t.dataset.note]=t.value; save(); return; }
   if (['host','int','ip','cidr','gw','vlan','vlanname'].includes(t.id)){ S[t.id]=t.value.trim(); save(); updateStatus(); return; }
   if (t.id==='calc-ip' || t.id==='calc-cidr'){ renderCalc(); return; }
+  if (t.id==='conv-cidr'){ convert('cidr'); return; }
+  if (t.id==='conv-mask'){ convert('mask'); return; }
+  if (t.id==='conv-wild'){ convert('wild'); return; }
   if (t.id==='q'){
     const q=$('#q').value.trim().toLowerCase();
     $$('[data-card]').forEach(c => c.classList.toggle('hidden', !!q && !(c.dataset.text||'').includes(q)));
@@ -701,7 +734,7 @@ $('#theme').onclick = () => { S.theme=S.theme==='dark'?'light':'dark'; save(); r
 $('#toggle-done').onclick = e => { const on=document.body.classList.toggle('show-all'); e.currentTarget.textContent=on?'Hide completed':'Show completed'; };
 $('#exp-json').onclick = () => { download(JSON.stringify(S,null,2),'packet-tracer-progress.json','application/json'); toast('Saved to a file'); };
 $('#exp-md').onclick = exportMD;
-$('#reset').onclick = () => { if(confirm('Clear all values, notes and progress?')){ S=blank(); save(); render(); $('#calc-ip').value=''; $('#calc-cidr').value=''; renderCalc(); toast('Reset'); } };
+$('#reset').onclick = () => { if(confirm('Clear all values, notes and progress?')){ S=blank(); save(); render(); $('#calc-ip').value=''; $('#calc-cidr').value=''; $('#conv-cidr').value=''; $('#conv-mask').value=''; $('#conv-wild').value=''; $('#conv-err').textContent=''; renderCalc(); toast('Reset'); } };
 
 const fab = $('#fab');
 fab.onclick = () => scrollTo({ top:0, behavior:'smooth' });
