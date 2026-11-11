@@ -184,6 +184,10 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 0}
 .seadeco .scene{position:absolute;left:0;right:0;bottom:0;width:100%;height:min(56vh,540px);color:var(--accent);opacity:.07}
 .seadeco .corner{position:absolute;top:66px;right:-36px;width:min(340px,40vw);height:min(340px,40vw);color:var(--accent);opacity:.08}
 .seadeco svg{width:100%;height:100%;display:block}
+.homecrest{position:fixed;left:18px;bottom:18px;z-index:6;width:60px;height:60px;border-radius:50%;overflow:hidden;display:block;background:var(--panel);box-shadow:0 0 0 3px var(--accent2),0 0 0 6px color-mix(in srgb,var(--bg) 78%,transparent),0 10px 24px rgba(0,0,0,.45);transition:transform .16s ease,box-shadow .16s ease}
+.homecrest img{width:100%;height:100%;object-fit:cover;display:block}
+.homecrest:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 0 0 3px var(--accent),0 0 0 6px color-mix(in srgb,var(--bg) 78%,transparent),0 12px 28px rgba(0,0,0,.5)}
+@media(max-width:560px){.homecrest{width:48px;height:48px;left:12px;bottom:12px}}
 .layout{position:relative;z-index:1}
 .brandname{font-family:"Cinzel",Georgia,serif;letter-spacing:.05em;font-weight:600}
 .brandname small{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:0;font-weight:500}
@@ -282,6 +286,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </g>
   </svg>
 </div>
+<a class="homecrest" href="index.html" title="Back to the harbour — Sven's Tools" aria-label="Sven's Tools — home">
+  <img src="pt-logo.jpg" alt="Sven's Tools crest">
+</a>
 <header>
   <div class="bar-in">
     <div class="brand">
