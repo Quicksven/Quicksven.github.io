@@ -9,14 +9,14 @@
 <link rel="canonical" href="https://quicksven.github.io/cisco-packet-tracer.html">
 <style>
 :root{
-  --bg:#0a1826;--panel:#0f2234;--panel2:#152c42;--line:#25405a;--text:#e9f2fb;--muted:#93aabf;
-  --accent:#38bdf8;--accent2:#7cc6ef;--ok:#4ade80;--warn:#fcd34d;--bad:#f87171;
-  --code:#06121e;--cmd:#a9dcf7;--ink:#04202f;--r:14px;--shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.35);
+  --bg:#140d07;--panel:#1e1409;--panel2:#281a0d;--line:#3d2a17;--text:#f7ece1;--muted:#c2a88a;
+  --accent:#ff9f45;--accent2:#ffbe82;--ok:#4ade80;--warn:#fcd34d;--bad:#f87171;
+  --code:#0d0803;--cmd:#ffd8b0;--ink:#2a1402;--r:14px;--shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.35);
 }
 [data-theme=light]{
-  --bg:#eef5fb;--panel:#ffffff;--panel2:#eaf3fb;--line:#d4e4f1;--text:#0f2a43;--muted:#5c7793;
-  --accent:#0b76c4;--accent2:#005073;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;
-  --code:#0b2033;--cmd:#a9dcf7;--ink:#ffffff;--shadow:0 8px 24px rgba(10,60,110,.1);
+  --bg:#fef6ee;--panel:#ffffff;--panel2:#fdeadb;--line:#f4dac3;--text:#3a2611;--muted:#8a6a4a;
+  --accent:#ec7a1b;--accent2:#c2560c;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;
+  --code:#1c1206;--cmd:#ffd8b0;--ink:#ffffff;--shadow:0 8px 24px rgba(150,90,20,.12);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:96px}
@@ -26,7 +26,7 @@ button:hover,.btn:hover{border-color:var(--accent);transform:translateY(-1px)}
 button:active{transform:none}
 .primary{background:var(--accent);color:var(--ink);border-color:var(--accent);font-weight:600}
 input,textarea,select{font:inherit;color:var(--cmd);background:var(--code);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0;outline:none;transition:border .15s,box-shadow .15s}
-input::placeholder,textarea::placeholder{color:#7f9fbe}
+input::placeholder,textarea::placeholder{color:#b58a60}
 input[type=checkbox]{accent-color:var(--ok)}
 input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 input[type=checkbox]{accent-color:var(--ok);width:20px;height:20px;cursor:pointer;margin:0}
@@ -126,12 +126,12 @@ main{min-width:0}
 textarea{width:100%;min-height:52px;resize:vertical;font-size:13.5px;color:var(--cmd);background:var(--code);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
 
 /* commands */
-.cmd{display:flex;gap:10px;align-items:flex-start;background:var(--code);border:1px solid #16324a;border-radius:11px;padding:10px 12px;margin:8px 0}
+.cmd{display:flex;gap:10px;align-items:flex-start;background:var(--code);border:1px solid #3a2817;border-radius:11px;padding:10px 12px;margin:8px 0}
 .cmd .cmdtext{flex:1;min-width:0}
-.cmd .lbl{display:block;color:#86add0;font-size:12px;margin-bottom:3px}
+.cmd .lbl{display:block;color:#c99a6a;font-size:12px;margin-bottom:3px}
 .cmd code{display:block;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--cmd);white-space:pre-wrap;word-break:break-word}
-.cmd .exp{display:block;color:#9ab6d0;font-size:12px;line-height:1.45;margin-top:6px}
-.cmd .copy{padding:5px 10px;font-size:12px;background:#0c2336;border-color:#20446a;color:#cfe8fb}
+.cmd .exp{display:block;color:#c2a888;font-size:12px;line-height:1.45;margin-top:6px}
+.cmd .copy{padding:5px 10px;font-size:12px;background:#241509;border-color:#48331c;color:#f3dcc0}
 .ph{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent);border-radius:5px;padding:0 3px}
 
 /* toolbox */
@@ -323,7 +323,7 @@ function refreshCodes(){
 }
 
 /* ---------- data: SECTIONS. tag: router | switch | both. cmd = [label, command, explanation] ---------- */
-const SECTION_COLOR = { basics:'#0b76c4', switching:'#0ea5a5', ivr:'#6366f1', routing:'#2563eb', protocols:'#7c3aed', services:'#0891b2', stp:'#3b82f6', verify:'#14b8a6' };
+const SECTION_COLOR = { basics:'#ef8a28', switching:'#16a34a', ivr:'#d97706', routing:'#2563eb', protocols:'#9333ea', services:'#ea580c', stp:'#e11d48', verify:'#0d9488' };
 const SECTIONS = [
   { id:'basics', name:'IOS basics', title:'Basics & device hardening', steps:[
     { id:'b-mode', title:'Get into configuration mode', tag:'both', desc:'The three commands you run on every device before anything else.',

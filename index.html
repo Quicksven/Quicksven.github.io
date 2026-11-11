@@ -46,8 +46,7 @@ body{margin:0;min-height:100vh;font:16px/1.6 system-ui,-apple-system,"Segoe UI",
   background-image:radial-gradient(900px 500px at 15% -10%,color-mix(in srgb,var(--cisco) 16%,transparent),transparent 60%),radial-gradient(900px 500px at 100% 0%,color-mix(in srgb,var(--sec) 14%,transparent),transparent 55%);
   display:flex;flex-direction:column;align-items:center;padding:64px 20px}
 header{text-align:center;margin-bottom:40px;max-width:640px}
-.logo{width:60px;height:60px;border-radius:16px;margin:0 auto 18px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;
-  background:linear-gradient(135deg,var(--cisco),var(--sec));box-shadow:var(--shadow)}
+.logo{width:60px;height:60px;border-radius:16px;margin:0 auto 18px;object-fit:cover;display:block;box-shadow:var(--shadow)}
 h1{margin:0 0 8px;font-size:30px;letter-spacing:-.3px}
 header p{margin:0;color:var(--muted);font-size:16px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px;width:100%;max-width:820px}
@@ -72,7 +71,7 @@ footer a{color:var(--muted)}
 </head>
 <body>
 <header>
-  <div class="logo">QS</div>
+  <img class="logo" src="pt-logo.jpg" alt="Sven's Tools logo">
   <h1>Sven's Tools</h1>
   <p>Quicksven's interactive study guides for networking and security labs. Pick one to get started.</p>
 </header>
