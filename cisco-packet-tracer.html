@@ -191,6 +191,40 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 0}
 .section-head .kicker::before{content:"";display:inline-block;width:13px;height:13px;margin-right:7px;vertical-align:-2px;background-color:var(--c);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1 L14.5 9.5 L23 12 L14.5 14.5 L12 23 L9.5 14.5 L1 12 L9.5 9.5 Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1 L14.5 9.5 L23 12 L14.5 14.5 L12 23 L9.5 14.5 L1 12 L9.5 9.5 Z'/%3E%3C/svg%3E") center/contain no-repeat}
 footer{font-family:"Cinzel",Georgia,serif;letter-spacing:.04em;font-size:12px}
 </style>
+<style>
+/* ===== Age-of-sail overhaul — Cisco (the seas) ===== */
+:root{
+  --bg:#0e1a20;--panel:#13242e;--panel2:#193038;--line:#2c4a4e;--text:#e9ecd9;--muted:#9fb0aa;
+  --accent:#49b3d6;--accent2:#d4b26a;--code:#081318;--cmd:#bfe6f2;--ink:#06222b;
+}
+:root[data-theme=light]{
+  --bg:#e8dcbe;--panel:#f4ebd2;--panel2:#ece0c2;--line:#cdb88a;--text:#233140;--muted:#6b6450;
+  --accent:#1f5f86;--accent2:#9a7b33;--code:#0c2130;--cmd:#bfe6f2;--ink:#ffffff;
+}
+body{font-family:"EB Garamond",Georgia,"Times New Roman",serif}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");background-size:170px}
+:root:not([data-theme=light]) body::after{mix-blend-mode:screen;opacity:.05}
+.seadeco .scene{opacity:.13}
+.seadeco .corner{opacity:.15}
+h1,h2,h3,.kicker,.brandname{font-family:"Cinzel",Georgia,serif}
+.desc,p,.step-title,.ptitle,.subtitle,label,.status,.legend{font-family:"EB Garamond",Georgia,serif}
+button,.btn,.tool-tabs button{font-family:"Cinzel",Georgia,serif;letter-spacing:.04em;border-color:color-mix(in srgb,var(--accent2) 65%,var(--line))}
+input,textarea,select,kbd,code,.cmd code,.pnum,.verin,#pct,.count,.calc-out .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+header{border-bottom:1px solid var(--accent2)!important;box-shadow:0 2px 0 color-mix(in srgb,var(--accent2) 35%,transparent)}
+.logo{border-radius:50%!important;box-shadow:0 0 0 2px var(--accent2)!important}
+.card,.navcard{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent2) 32%,transparent), 0 8px 22px rgba(25,35,55,.14);
+  background-image:
+    radial-gradient(circle at 13px 13px, var(--accent2) 0 1.6px, transparent 2.3px),
+    radial-gradient(circle at calc(100% - 13px) 13px, var(--accent2) 0 1.6px, transparent 2.3px),
+    radial-gradient(circle at 13px calc(100% - 13px), var(--accent2) 0 1.6px, transparent 2.3px),
+    radial-gradient(circle at calc(100% - 13px) calc(100% - 13px), var(--accent2) 0 1.6px, transparent 2.3px);
+  background-repeat:no-repeat}
+.primary{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+.section-head{border-bottom:1px solid color-mix(in srgb,var(--accent2) 45%,transparent);padding-bottom:9px}
+.section-head h2{font-size:21px}
+footer{font-family:"Cinzel",Georgia,serif;letter-spacing:.05em}
+</style>
 </head>
 <body>
 <div class="seadeco" aria-hidden="true">
