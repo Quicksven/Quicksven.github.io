@@ -281,11 +281,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <path d="M150 334 Q166 368 214 372 L452 372 Q520 368 540 334 Q452 350 346 350 Q230 350 150 334 Z" fill="currentColor" fill-opacity=".42" stroke-width="2.4"/>
       <g fill="currentColor" fill-opacity=".55" stroke="none"><rect x="214" y="350" width="13" height="11" rx="2"/><rect x="258" y="351" width="13" height="11" rx="2"/><rect x="302" y="351" width="13" height="11" rx="2"/><rect x="346" y="351" width="13" height="11" rx="2"/><rect x="390" y="351" width="13" height="11" rx="2"/><rect x="434" y="350" width="13" height="11" rx="2"/></g>
     </g>
-    <use href="#sloop" transform="translate(628,298) scale(.56)"/>
-    <use href="#sloop" transform="translate(860,222) scale(.4)" opacity=".85"/>
-    <use href="#sloop" transform="translate(1032,168) scale(.28)" opacity=".7"/>
-    <g stroke-width="1.6" opacity=".55"><path d="M250 120 q10 -8 20 0 q10 -8 20 0"/><path d="M300 150 q8 -6 16 0 q8 -6 16 0"/><path d="M226 150 q7 -5 14 0 q7 -5 14 0"/></g>
-    <g stroke-width="2" opacity=".6"><path d="M360 470 q26 -12 52 0 t52 0 t52 0"/><path d="M700 486 q26 -12 52 0 t52 0 t52 0"/></g>
+    <use href="#sloop" transform="translate(88,296) scale(.42)" opacity=".9"/>
+    <use href="#sloop" transform="translate(986,250) scale(.46)" opacity=".9"/>
+    <use href="#sloop" transform="translate(1142,320) scale(.3)" opacity=".75"/>
+    <g stroke-width="1.6" opacity=".5"><path d="M120 110 q10 -8 20 0 q10 -8 20 0"/><path d="M170 138 q8 -6 16 0 q8 -6 16 0"/><path d="M96 140 q7 -5 14 0 q7 -5 14 0"/></g>
+    <g stroke-width="2" opacity=".55"><path d="M70 472 q26 -12 52 0 t52 0 t52 0"/><path d="M1000 486 q26 -12 52 0 t52 0 t52 0"/></g>
     <g transform="translate(120,392)" stroke-width="3" opacity=".65">
       <circle cx="0" cy="6" r="8"/><path d="M0 14 L0 92"/><path d="M-22 30 L22 30"/>
       <path d="M-34 66 Q-30 92 0 92 Q30 92 34 66"/>
@@ -557,11 +557,31 @@ const SECTIONS = [
       cmds:[
         ['Point the interface at the server', 'interface {INT}\n ip helper-address 10.0.0.5', 'DHCP uses broadcasts, which routers do not forward. ip helper-address relays the request to the real DHCP server\'s IP.']
       ]},
-    { id:'sv-nat', title:'NAT overload (PAT)', tag:'router', desc:'Let a whole private network share one public IP.',
+    { id:'sv-nat-if', title:'NAT: mark inside & outside interfaces', tag:'router', desc:'Every NAT type starts here — tell the router which interface faces the private LAN and which faces the public side.',
       cmds:[
-        ['Mark inside and outside interfaces', 'interface {INT}\n ip nat inside\n exit\ninterface g0/1\n ip nat outside\n exit', 'NAT needs to know which side is the private "inside" and which is the public "outside". Set these on the right two interfaces.'],
-        ['Match internal hosts and overload', 'access-list 1 permit {NET} {WILD}\nip nat inside source list 1 interface g0/1 overload', 'The access-list picks which internal addresses get translated. overload (PAT) maps them all onto the outside interface using port numbers.'],
-        ['Check translations', 'do show ip nat translations', 'Shows the live inside-to-outside address/port mappings. Proof that NAT is actually working when a host reaches the internet.']
+        ['Inside (LAN) interface', 'interface {INT}\n ip nat inside\n exit', 'The "inside" is your private network. Traffic leaving it is what gets translated.'],
+        ['Outside (public/WAN) interface', 'interface g0/1\n ip nat outside\n exit', 'The "outside" faces the internet or upstream router. Change g0/1 to whichever port is your public link.']
+      ]},
+    { id:'sv-nat-static', title:'Static NAT (one-to-one)', tag:'router', desc:'Permanently map one private IP to one public IP — for servers that must be reachable from outside.',
+      cmds:[
+        ['Map an inside host to a fixed public IP', 'ip nat inside source static {IP} 203.0.113.10', 'Left is the private (inside-local) address, right is the public (inside-global) one. The mapping never changes, so outsiders always reach that server at 203.0.113.10.']
+      ]},
+    { id:'sv-nat-dyn', title:'Dynamic NAT (address pool)', tag:'router', desc:'Lend out public IPs from a pool, first-come first-served — when you have several public addresses but fewer than hosts.',
+      cmds:[
+        ['Define the pool of public addresses', 'ip nat pool PUB 203.0.113.10 203.0.113.20 netmask 255.255.255.248', 'The pool is the range of public IPs NAT may hand out. The netmask must match the public subnet.'],
+        ['Pick which inside hosts may translate', 'access-list 1 permit {NET} {WILD}', 'A standard access-list selects the inside addresses allowed to use NAT — here your LAN network and its wildcard mask.'],
+        ['Bind the list to the pool', 'ip nat inside source list 1 pool PUB', 'Joins "these inside hosts" to "that pool". A host keeps a public IP until it goes idle, then it returns to the pool for reuse.']
+      ]},
+    { id:'sv-nat-pat', title:'PAT / NAT overload (share one IP)', tag:'router', desc:'Let a whole private network share a single public IP — the usual home and lab internet setup.',
+      cmds:[
+        ['Match internal hosts and overload the interface', 'access-list 1 permit {NET} {WILD}\nip nat inside source list 1 interface g0/1 overload', 'The access-list picks which internal addresses get translated. overload (PAT) maps them all onto the outside interface, telling them apart by port number.'],
+        ['...or overload onto a pool', 'ip nat inside source list 1 pool PUB overload', 'Same idea, but hides many hosts behind a small pool of public IPs instead of one interface address.']
+      ]},
+    { id:'sv-nat-verify', title:'NAT: verify & troubleshoot', tag:'router', desc:'Confirm the translations are really happening.',
+      cmds:[
+        ['See live translations', 'do show ip nat translations', 'Lists the inside-to-outside address and port mappings. An empty table usually means the inside/outside interfaces or the access-list are wrong.'],
+        ['Counters & config summary', 'do show ip nat statistics', 'Shows hit counts, the active pool or list, and which interfaces are inside and outside — the quickest way to spot a misconfiguration.'],
+        ['Clear dynamic entries to retest', 'clear ip nat translation *', 'Wipes current dynamic translations so you can test again from a clean slate. Static mappings are kept.']
       ]},
     { id:'sv-acl', title:'Access control lists', tag:'router', desc:'Permit or deny traffic. Remember the hidden "deny all" at the end.',
       cmds:[
