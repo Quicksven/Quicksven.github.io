@@ -594,10 +594,19 @@ const SECTIONS = [
         ['Extended ACL (source, dest, port)', 'access-list 100 permit tcp {NET} {WILD} host 10.0.0.5 eq 80', 'Extended lists (100–199) match source, destination and port. This example allows web traffic to one server; place extended ACLs near the source.'],
         ['Apply it to an interface', 'interface {INT}\n ip access-group 100 in', 'An ACL does nothing until applied. "in" filters traffic entering the interface; "out" filters traffic leaving it.']
       ]},
-    { id:'sv-ssh', title:'SSH remote access', tag:'both', desc:'Secure replacement for Telnet. Several pieces must all be present.',
+    { id:'sv-ssh-keys', title:'SSH 1 — identity & RSA keys', tag:'both', desc:'RSA keys are named after the device, so SSH needs a hostname and domain name first, then the key pair that encrypts the session.',
       cmds:[
-        ['Prerequisites: name, domain, user, keys', 'hostname {HOST}\nip domain-name lab.local\nusername admin privilege 15 secret ClassLab1\ncrypto key generate rsa', 'SSH keys need a hostname and domain name to exist. The local user logs you in; at the key prompt choose 1024 bits or more.'],
-        ['Turn on SSH on the VTY lines', 'line vty 0 4\n transport input ssh\n login local\n exit', 'The VTY lines are the remote-login slots. transport input ssh blocks plaintext Telnet; login local checks the username you just made.']
+        ['Set hostname and domain name', 'hostname {HOST}\nip domain-name lab.local', 'The key label becomes hostname.domain, so both must be set or "crypto key generate rsa" is refused.'],
+        ['Generate keys and force version 2', 'crypto key generate rsa modulus 1024\nip ssh version 2', '1024 bits is the practical minimum in Packet Tracer (2048 on real gear). SSH turns on the moment keys exist; version 2 drops the weak v1.']
+      ]},
+    { id:'sv-ssh-user', title:'SSH 2 — a local login', tag:'both', desc:'SSH must check a username and password, so create a local account and protect enable mode.',
+      cmds:[
+        ['Create an admin user and enable secret', 'username admin privilege 15 secret ClassLab1\nenable secret ClassLab1', 'privilege 15 logs the user straight into privileged mode. The enable secret guards the # prompt if you ever drop to a lower level.']
+      ]},
+    { id:'sv-ssh-vty', title:'SSH 3 — allow SSH on the VTY lines & verify', tag:'both', desc:'Point the remote-login lines at SSH only, check the local user database, then confirm it works.',
+      cmds:[
+        ['Lock the VTY lines to SSH', 'line vty 0 4\n transport input ssh\n login local\n exit', 'transport input ssh blocks plaintext Telnet; login local checks the username you just made. This is the secure version of the VTY step up in Basics.'],
+        ['Verify and connect', 'do show ip ssh\ndo show ssh', 'show ip ssh confirms the version and that a key is present; show ssh lists active sessions. Test from a PC with: ssh -l admin {IP}.']
       ]}
   ]},
   { id:'stp', name:'STP & EtherChannel', title:'Spanning Tree & EtherChannel', steps:[
