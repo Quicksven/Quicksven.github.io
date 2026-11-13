@@ -250,6 +250,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
     <circle cx="50" cy="50" r="4.5" stroke-width="0.8"/>
   </svg>
   <svg class="scene" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMax meet" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <defs><g id="sloop">
+      <path d="M-46 10 Q-34 28 -6 30 L30 30 Q58 26 66 10 Q30 20 -14 20 Q-38 20 -46 10 Z" fill="currentColor" fill-opacity=".4" stroke-width="2"/>
+      <path d="M8 10 L8 -52" stroke-width="3"/><path d="M-40 10 L-72 -10" stroke-width="2.4"/>
+      <path d="M10 -48 Q52 -32 44 8 L10 6 Z" fill="currentColor" fill-opacity=".3" stroke-width="1.6"/>
+      <path d="M6 -40 Q-32 -22 -42 8 L6 4 Z" fill="currentColor" fill-opacity=".26" stroke-width="1.6"/>
+      <path d="M8 -52 q28 -6 58 4 q-28 10 -58 6 Z" fill="currentColor" fill-opacity=".5" stroke="none"/>
+    </g></defs>
     <path d="M330 440 C 520 388, 600 300, 820 288 S 1090 196, 1170 120" stroke-width="2.2" stroke-dasharray="2 12"/>
     <circle cx="1169" cy="119" r="15" stroke-width="1.6" opacity=".7"/>
     <path d="M1158 108 l22 22 M1180 108 l-22 22" stroke-width="2.4"/>
@@ -274,6 +281,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <path d="M150 334 Q166 368 214 372 L452 372 Q520 368 540 334 Q452 350 346 350 Q230 350 150 334 Z" fill="currentColor" fill-opacity=".42" stroke-width="2.4"/>
       <g fill="currentColor" fill-opacity=".55" stroke="none"><rect x="214" y="350" width="13" height="11" rx="2"/><rect x="258" y="351" width="13" height="11" rx="2"/><rect x="302" y="351" width="13" height="11" rx="2"/><rect x="346" y="351" width="13" height="11" rx="2"/><rect x="390" y="351" width="13" height="11" rx="2"/><rect x="434" y="350" width="13" height="11" rx="2"/></g>
     </g>
+    <use href="#sloop" transform="translate(628,298) scale(.56)"/>
+    <use href="#sloop" transform="translate(860,222) scale(.4)" opacity=".85"/>
+    <use href="#sloop" transform="translate(1032,168) scale(.28)" opacity=".7"/>
+    <g stroke-width="1.6" opacity=".55"><path d="M250 120 q10 -8 20 0 q10 -8 20 0"/><path d="M300 150 q8 -6 16 0 q8 -6 16 0"/><path d="M226 150 q7 -5 14 0 q7 -5 14 0"/></g>
+    <g stroke-width="2" opacity=".6"><path d="M360 470 q26 -12 52 0 t52 0 t52 0"/><path d="M700 486 q26 -12 52 0 t52 0 t52 0"/></g>
     <g transform="translate(120,392)" stroke-width="3" opacity=".65">
       <circle cx="0" cy="6" r="8"/><path d="M0 14 L0 92"/><path d="M-22 30 L22 30"/>
       <path d="M-34 66 Q-30 92 0 92 Q30 92 34 66"/>
