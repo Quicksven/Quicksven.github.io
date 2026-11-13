@@ -472,6 +472,11 @@ const SECTIONS = [
         ['Console line password', 'line console 0\n password ClassLab1\n login\n exit', 'Asks for a password on the blue console cable. login turns the check on; without it the password is ignored.'],
         ['Encrypt all plaintext passwords', 'service password-encryption', 'Scrambles the remaining plaintext passwords in the running config so a screenshot does not leak them. Weak encryption, but better than nothing.']
       ]},
+    { id:'b-vty', title:'Remote login lines (VTY)', tag:'both', desc:'The virtual terminal lines are the slots that accept Telnet and SSH logins. Give them a password or the device cannot be managed remotely — an open VTY line with no password is a classic hole.',
+      cmds:[
+        ['Password-protect the five VTY lines', 'line vty 0 4\n password ClassLab1\n login\n exit', '"0 4" covers virtual lines 0 through 4 — five simultaneous remote sessions. password sets it, login turns the check on. Without login the line is left unprotected.'],
+        ['Optional: choose the allowed protocols', 'line vty 0 4\n transport input telnet ssh', 'Picks which protocols the lines accept. For a secure device use "transport input ssh" on its own (see the SSH step); telnet is plaintext.']
+      ]},
     { id:'b-banner', title:'Login banner', tag:'both', desc:'A legal warning shown before login. Often required by lab rubrics.',
       cmds:[
         ['Message of the day', 'banner motd #Authorized access only#', 'Shows the text between the # markers before the login prompt. Pick any character not used in the message as the delimiter.']
