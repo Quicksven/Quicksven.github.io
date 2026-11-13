@@ -588,11 +588,26 @@ const SECTIONS = [
         ['Counters & config summary', 'do show ip nat statistics', 'Shows hit counts, the active pool or list, and which interfaces are inside and outside — the quickest way to spot a misconfiguration.'],
         ['Clear dynamic entries to retest', 'clear ip nat translation *', 'Wipes current dynamic translations so you can test again from a clean slate. Static mappings are kept.']
       ]},
-    { id:'sv-acl', title:'Access control lists', tag:'router', desc:'Permit or deny traffic. Remember the hidden "deny all" at the end.',
+    { id:'acl-std', title:'ACL 1 — standard (filter by source)', tag:'router', desc:'Numbered 1–99. Matches the source address only, so place it close to the destination. Every ACL ends in an invisible "deny all".',
       cmds:[
-        ['Standard ACL (by source only)', 'access-list 10 permit {NET} {WILD}', 'Standard lists (1–99) filter on source address only. Place them close to the destination so you do not block too much.'],
-        ['Extended ACL (source, dest, port)', 'access-list 100 permit tcp {NET} {WILD} host 10.0.0.5 eq 80', 'Extended lists (100–199) match source, destination and port. This example allows web traffic to one server; place extended ACLs near the source.'],
-        ['Apply it to an interface', 'interface {INT}\n ip access-group 100 in', 'An ACL does nothing until applied. "in" filters traffic entering the interface; "out" filters traffic leaving it.']
+        ['Permit a subnet, then a single host', 'access-list 10 permit {NET} {WILD}\naccess-list 10 permit host {IP}', 'Lines are read top-down, first match wins. A wildcard mask is the inverse of a subnet mask; "host {IP}" is shorthand for one address.'],
+        ['Deny one host, allow everyone else', 'access-list 11 deny host 192.168.10.66\naccess-list 11 permit any', 'Order matters: the deny must come before the permit. End with "permit any" or the hidden deny-all drops all remaining traffic.']
+      ]},
+    { id:'acl-ext', title:'ACL 2 — extended (source, dest, port)', tag:'router', desc:'Numbered 100–199. Matches source, destination, protocol and port — far more precise. Place it close to the source.',
+      cmds:[
+        ['Allow web to one server', 'access-list 100 permit tcp {NET} {WILD} host 10.0.0.5 eq 80\naccess-list 100 permit tcp {NET} {WILD} host 10.0.0.5 eq 443', 'Reads protocol, source, destination, then port. eq 80/443 is HTTP/HTTPS. Anything not listed hits the implicit deny.'],
+        ['Let ping and DNS through', 'access-list 100 permit icmp {NET} {WILD} any\naccess-list 100 permit udp {NET} {WILD} any eq 53', 'icmp covers ping; udp ... eq 53 is DNS. Add every flow you need to allow before the list is applied.']
+      ]},
+    { id:'acl-named', title:'ACL 3 — named (easier to edit)', tag:'router', desc:'Names instead of numbers, and you can delete or insert a single line by its sequence number instead of retyping the whole list.',
+      cmds:[
+        ['Build a named extended list', 'ip access-list extended WEB\n permit tcp {NET} {WILD} host 10.0.0.5 eq 80\n deny ip any any\n exit', 'Each rule is entered under the list name. "deny ip any any" makes the final drop explicit so it shows up with hit counts.'],
+        ['Delete or insert one rule', 'ip access-list extended WEB\n no 20\n 15 permit tcp {NET} {WILD} host 10.0.0.5 eq 443\n exit', 'Rules are numbered 10, 20, 30… "no 20" removes line 20; "15 permit …" slots a rule between 10 and 20 without rebuilding the list.']
+      ]},
+    { id:'acl-apply', title:'ACL 4 — apply & verify', tag:'router', desc:'An ACL does nothing until it is attached. Pick an interface and direction, or lock down the VTY lines, then check the hit counters.',
+      cmds:[
+        ['On an interface (in or out)', 'interface {INT}\n ip access-group 100 in\n exit', '"in" filters traffic entering the interface; "out" filters what leaves it. One ACL per direction per interface.'],
+        ['Restrict who can manage the device', 'access-list 20 permit {NET} {WILD}\nline vty 0 4\n access-class 20 in\n exit', 'access-class on the VTY lines allows SSH/Telnet only from trusted sources — a standard ACL is enough here.'],
+        ['Check the rules and their hits', 'do show access-lists', 'Prints every rule with a match counter — the quickest way to see which line is firing, or why traffic is hitting the hidden deny-all.']
       ]},
     { id:'sv-ssh-keys', title:'SSH 1 — identity & RSA keys', tag:'both', desc:'RSA keys are named after the device, so SSH needs a hostname and domain name first, then the key pair that encrypts the session.',
       cmds:[
