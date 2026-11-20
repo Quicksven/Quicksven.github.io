@@ -562,6 +562,19 @@ const SECTIONS = [
       cmds:[
         ['Route to one network', 'ip route {NET} {MASK} {GW}', 'Says "to reach this network, send packets to this next-hop IP". You need one line per remote network (or one on each router).'],
         ['Default route (gateway of last resort)', 'ip route 0.0.0.0 0.0.0.0 {GW}', 'Matches everything not in the routing table — ideal for the link toward the internet or a single upstream router. Replaces many specific routes.']
+      ]},
+    { id:'r-hsrp-active', title:'HSRP 1 — active router (virtual gateway)', tag:'router', desc:'HSRP lets two routers share one virtual gateway IP, so hosts keep a working default gateway if a router fails. Give the preferred (active) router the higher priority.',
+      cmds:[
+        ['Virtual IP, version 2, priority & preempt', 'interface {INT}\n standby version 2\n standby 1 ip 192.168.10.1\n standby 1 priority 110\n standby 1 preempt\n exit', 'Group 1 shares the virtual IP 192.168.10.1 — that is the address every host uses as its default gateway, not either router\'s real IP. priority 110 beats the default of 100, and preempt lets this router retake the active role when it recovers after a failure.']
+      ]},
+    { id:'r-hsrp-standby', title:'HSRP 2 — standby router', tag:'router', desc:'The second router joins the same group with the same virtual IP but a lower priority, so it waits in standby and takes over only if the active one goes down.',
+      cmds:[
+        ['Same group & virtual IP, lower priority', 'interface {INT}\n standby version 2\n standby 1 ip 192.168.10.1\n standby 1 priority 90\n standby 1 preempt\n exit', 'The identical group number and virtual IP are what pair the two routers. priority 90 keeps this one in standby; it still gets preempt so the roles settle correctly after any failover.']
+      ]},
+    { id:'r-hsrp-track', title:'HSRP 3 — track the uplink, authenticate & verify', tag:'router', desc:'Make failover smart (drop priority when the uplink dies), lock the group with a password, then confirm which router is active.',
+      cmds:[
+        ['Track the WAN port and authenticate', 'interface {INT}\n standby 1 track g0/1 20\n standby 1 authentication md5 key-string ClassLab1\n exit', 'If g0/1 (the uplink) goes down, this router drops its priority by 20 so the other one — now higher — takes over, even though this box is still up. The MD5 key must match on both routers or they will not form the group.'],
+        ['Check the HSRP state', 'do show standby brief\ndo show standby', 'show standby brief lists the group, the virtual IP and which router is Active vs Standby. Test it: ping the virtual IP from a PC, then shut the active router\'s uplink and watch the standby take over.']
       ]}
   ]},
   { id:'protocols', name:'Routing protocols', title:'Dynamic routing (RIP, OSPF, EIGRP)', steps:[
